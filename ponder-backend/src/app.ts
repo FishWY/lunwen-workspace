@@ -12,26 +12,12 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 3001;
 
-// CORS Configuration - Allow multiple origins
-const allowedOrigins = [
-    process.env.CLIENT_ORIGIN || 'http://localhost:5173',
-    'http://localhost:5173',
-    'https://ponder-frontend.vercel.app',
-    'https://traelunwen55n3-i5wl0yq8k-fishwys-projects.vercel.app'
-];
-
+// Simplified CORS - Allow all Vercel deployments
 app.use(cors({
-    origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-
-        if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: true, // Allow all origins for now
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
