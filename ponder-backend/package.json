@@ -1,0 +1,42 @@
+{
+    "name": "ponder-backend",
+    "version": "1.0.0",
+    "description": "Backend server for Ponder - AI-powered reading assistant",
+    "main": "dist/app.js",
+    "scripts": {
+        "dev": "tsx watch src/app.ts",
+        "build": "tsc",
+        "start": "node dist/app.js",
+        "build:client": "npm --prefix ../ponder ci && npm --prefix ../ponder run build",
+        "build:all": "npm run build && npm run build:client",
+        "prisma:generate": "prisma generate",
+        "prisma:migrate": "prisma migrate dev",
+        "prisma:studio": "prisma studio",
+        "postinstall": "prisma generate"
+    },
+    "keywords": [
+        "ai",
+        "pdf",
+        "mindmap"
+    ],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "@google/generative-ai": "^0.21.0",
+        "@prisma/client": "^5.22.0",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.5",
+        "express": "^4.21.1",
+        "multer": "^1.4.5-lts.1",
+        "pdf-parse": "^1.1.1"
+    },
+    "devDependencies": {
+        "@types/cors": "^2.8.17",
+        "@types/express": "^5.0.0",
+        "@types/multer": "^1.4.12",
+        "@types/node": "^22.9.3",
+        "prisma": "^5.22.0",
+        "tsx": "^4.19.2",
+        "typescript": "^5.7.2"
+    }
+}

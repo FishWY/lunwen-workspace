@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String      @id @default(uuid())
+  email        String      @unique
+  passwordHash String
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  workspaces   Workspace[]
+}
+
+model Workspace {
+  id           String        @id @default(uuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title        String
+  pdfUrl       String        // Local file path or S3 URL
+  pdfContent   String        // Extracted text with [Page X] markers
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  nodes        Node[]
+  edges        Edge[]
+  chatSessions ChatSession[]
+
+  @@index([userId])
+}
+
+model Node {
+  id          String    @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  type        String    // 'file', 'summary', 'topic', 'reference', 'note', 'generation'
+  position    String    // { x: number, y: number } - stored as JSON string
+  data        String    // { label, content, quote, page, etc. } - stored as JSON string
+  parentId    String?   // For hierarchical relationships
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([workspaceId])
+}
+
+model Edge {
+  id          String    @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  source      String    // Node ID
+  target      String    // Node ID
+  animated    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  @@index([workspaceId])
+}
+
+model ChatSession {
+  id          String    @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  messages    String    // Array of { role: 'user' | 'assistant', content: string } - stored as JSON string
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([workspaceId])
+}
